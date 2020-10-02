@@ -70,13 +70,13 @@ The $\norm{D}_{1}$ norm and $\norm{D}_{\infty}$ norm where preferred because les
 \end{figure}
 
 \section{Detector}
-The detector implemented is a simple Background Subtractor, as suggested.
+The detector implemented is a simple background subtractor, as suggested.
 
-The methodology used for creating the model was simply driven by trials and errors: thanks to the framework implemented I was able to add and remove operation to the pipeline and see the output in order to assert the correctness of it; in this way I built the pipeline and defined the parameters of each operation.
+The methodology used for creating the model was simply driven by trials and errors: thanks to the framework implemented I was able to add and remove operations to the pipeline and see the output in order to assert the correctness of it; in this way I built the pipeline and defined the parameters of each operation.
 
 With a test pipeline\footnote{BackgroundNoGaussian class} was observed that the background subtractor (using the interpolated frame) was affected by artifact near the end of the video.
 
-This happened with lower strength when Gaussian blur is used. \CREF{fig:gaussian}
+This happen with lower intensity when Gaussian blur is used. \CREF{fig:gaussian}
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.5\textwidth,keepaspectratio]{background_no_gaussian.PNG}
@@ -87,7 +87,7 @@ This happened with lower strength when Gaussian blur is used. \CREF{fig:gaussian
 So in order to enhance the frame input a Gaussian blur is used for averaging pixels intensity without disrupting the image.
 
 For removing noise, at the beginning, only opening with a filter of (9,9) was applied.
-After some inconclusive trials in which the noise was not completely deleted I've tried the median filter, the "salt and pepper filter" which is used for impulse noise ( as the noisy pixels in a white-and-black image)
+After some inconclusive trials in which the noise was not completely deleted I've tried the median filter, the "salt and pepper filter" which is used for impulse noise (as the noisy pixels in a white-and-black image).
 As we can see it perform better. \CREF{medfilter}
 
 Moreover in order to remove additional noise the opening with a small filter is used afterwards.
@@ -182,19 +182,19 @@ I have also tried to improve the contour detection using Canny edge detection al
 \begin{figure}
     \centering
     \includegraphics[width=0.5\textwidth,keepaspectratio]{canny.png}
-    \caption{Canny edge detection algorithm applied to the inner area of the contour. Left: edges computed using Canny. Right: Edges overlapped on the image. Any binary morphology operator is going to remove also the edges.}
+    \caption{Canny edge detection algorithm applied to the inner area of the contour. Left: edges computed using Canny. Right: Edges overlapped on the image. Any binary morphology operator is going to remove the edges of the human figure.}
     \label{canny}
 \end{figure}
 
-\section{Filtering}
+\section{Filtering and labelling}
 The information read about the contours are : area, perimeter, ratio, rectangularity, circularity, mean and standard deviation (in this case mean and standard deviation of the image inside the bounding box of the contour).
 
-
-
-For filtering contours, first it is done a check on rectangularity and then on the area and perimeter.
+For \textbf{filtering} contours, first it is done a check on the rectangularity then on the area and perimeter: the idea was to pick big blobs and the ones with a considerable perimeter and area.
 This three information were chosen after reasoning on top of the logs produced by the detector.
 
 I was thinking to use circularity, also, to filter out perfect circle but I have observed that sometimes blobs with high rectangularity have high circularity: the idea was to filter out isolated point that are enlarged by dilation.
+
+The \textbf{labelling} is done checking area and ratio: big blobs with an height greater than three times the width are considered a person otherwise it's an object (other).  
 
 \clearpage
 \section{Handling false positive}
@@ -248,7 +248,7 @@ In order to detect false positives two solutions are proposed:
 \end{figure}
 
 \section{Conclusion}
-The performance, measured as how much the pipeline is able to capture the human silhouette, are similar between using a static background and an interpolated one since the use the same pipeline instead the adaptive one is worse but although it is able to avoid false positive. \CREF{out481}
+The performance, defined as how much the pipeline is able to capture the human silhouette, are similar between using a static background and an interpolated one since the use the same pipeline instead the adaptive one is worse but although it is able to avoid false positive. \CREF{out481}
 
 \begin{figure}
     \begin{subfigure}{0.3\textwidth}
