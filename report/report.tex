@@ -8,7 +8,7 @@
 \usepackage{amsmath}
 \usepackage{subcaption}
 \usepackage{tabularx}
-\usepackage{hyperref}
+\usepackage[hyperfootnotes=false]{hyperref}
 \usepackage{cleveref}
 
 \newcommand{\CREF}[1]{[\hyperref[#1]{\Cref{#1}}]}
@@ -40,10 +40,10 @@
 \end{titlepage}
 
 \section{Introduction}
-The project presented is trying to deal with object intrusion inside detection the field of view of a camera.
-Background difference, image segmentation and binary morphologies operators are used in order to build a system that is able to find an intrusion as much as possible.
+The project presented is trying to deal with object intrusion detection inside the field of view of a camera.
+Background difference, image segmentation and binary morphology operators are used in order to build a system that is able to find an intrusion as much as possible.
 
-I will call the sequence of transformations and operations, \textit{pipeline}, and therefore the project aimed to find a general pipeline to deal with object intrusion detection.
+I will call \textbf{pipeline} the sequence of transformations and operations done on frames and therefore the project aimed to find a general pipeline to deal with object intrusion detection.
 
 It was implemented a detector with different kind of background subtractor methods: static background, interpolated background and adaptive background.
 
@@ -57,6 +57,7 @@ The project was structured in the following way for facilitating the development
     \item \textit{core.detectors.*}: contains the implementation of the proposed detector
     \item \textit{core.Contour.Contour}: Contour class for handling contour operation
     \item \textit{common.py}: common operations such as compute difference of two images,compute the gradient of an image, draw contours and so on.
+    \item \textit{distances.*}: contains distances used.
 \end{itemize}
 
 \section{Distances}
@@ -73,20 +74,20 @@ The detector implemented is a simple Background Subtractor, as suggested.
 
 The methodology used for creating the model was simply driven by trials and errors: thanks to the framework implemented I was able to add and remove operation to the pipeline and see the output in order to assert the correctness of it; in this way I built the pipeline and defined the parameters of each operation.
 
-With a test pipeline\footnote{BackgroundNoGaussian class} was observed that the background subtractor was affected by artifact at some point (near the end of the video).
-This didn't happen when Gaussian blur is used. \CREF{fig:gaussian}
+With a test pipeline\footnote{BackgroundNoGaussian class} was observed that the background subtractor (using the interpolated frame) was affected by artifact near the end of the video.
+
+This happened with lower strength when Gaussian blur is used. \CREF{fig:gaussian}
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.5\textwidth,keepaspectratio]{background_no_gaussian.PNG}
-    \caption{Left: NO Gaussian blur. Right: Gaussian blur.}
+    \caption{\textit{Pipeline} of BackgroundNoGaussian}
     \label{fig:gaussian}
 \end{figure}
 
 So in order to enhance the frame input a Gaussian blur is used for averaging pixels intensity without disrupting the image.
 
-
-For removing noise, at the beginning, only opening with a filter of (7,7) was applied.
-After some inconclusive trials in which the blobs were too much separated I've tried the median filter, the "salt and pepper filter" which is used for impulse noise ( as the noisy pixels in a white-and-black image)
+For removing noise, at the beginning, only opening with a filter of (9,9) was applied.
+After some inconclusive trials in which the noise was not completely deleted I've tried the median filter, the "salt and pepper filter" which is used for impulse noise ( as the noisy pixels in a white-and-black image)
 As we can see it perform better. \CREF{medfilter}
 
 Moreover in order to remove additional noise the opening with a small filter is used afterwards.
@@ -110,7 +111,6 @@ Based on the kind of background used:
         \item \textbf{adaptive}: the background is computed each time as the weighted average summation with the previous frame. Used for creating a detector without false positive.
     \end{itemize}  
 different parameters and pipelines are defined.
-
 
 The parameters are the following:
 
@@ -200,16 +200,16 @@ I was thinking to use circularity, also, to filter out perfect circle but I have
 \section{Handling false positive}
 In order to detect false positives two solutions are proposed:
 \begin{itemize}
-    \item Compute the standard deviation of the image normalized over 255 after computing its gradient: I think that using the raw image could be misleading.
+    \item Compute the standard deviation of the image, normalized over 255, after computing its gradient: I think that using the raw image could be misleading.
 
-          The image used is the one inside the bounding box because of misleading edges found using the inner area. \CREF{grad}
+    The image used is the one inside the bounding box because of misleading edges found using the inner area. \CREF{grad}
 
 
-          In this case the contour segment is still in the image but is labeled as false positive. \CREF{Figure:fpl}
+    In this case the contour segment is still in the image but is labeled as false positive. \CREF{Figure:fpl}
 
-          Reasoning only on top of the contour is not possible because the segmentation doesn't return always the exact contour.
+    Reasoning only on top of the contour is not possible because the segmentation doesn't return always the exact contour.
 
-          The \textbf{threshold} used for detecting \textbf{false positive} is \textbf{$0.1$} chosen after reding the logs.
+    The \textbf{threshold} used for detecting \textbf{false positive} is \textbf{$0.1$} chosen after reding the logs.
 
     \item Compute the background as an weighted sum with the previous frame at each time step. In this case the object is not detected; moreover also the other object, which is steady after beeing moved by the human, is ignored. \CREF{Figure:fpi}
 \end{itemize}
@@ -245,9 +245,26 @@ In order to detect false positives two solutions are proposed:
         \label{Figure:fpi}
     \end{subfigure}
     \caption{False positive detection}
-
 \end{figure}
 
+\section{Conclusion}
+The performance, measured as how much the pipeline is able to capture the human silhouette, are similar between using a static background and an interpolated one since the use the same pipeline instead the adaptive one is worse but although it is able to avoid false positive. \CREF{out481}
 
+\begin{figure}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth,keepaspectratio]{out481_static.PNG}
+        \caption{Using kind=static}
+    \end{subfigure}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth,keepaspectratio]{out481_first.PNG}
+        \caption{Using kind=first}
+    \end{subfigure}
+    \begin{subfigure}{0.3\textwidth}
+        \includegraphics[width=\linewidth,keepaspectratio]{out481_adaptive.PNG}
+        \caption{Using kind=adaptive}
+    \end{subfigure}
+    \caption{Output of the frame 481.}
+    \label{out481}
+\end{figure}
 \end{document}
 

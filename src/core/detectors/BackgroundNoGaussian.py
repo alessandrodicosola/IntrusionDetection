@@ -91,6 +91,6 @@ class BackgroundNoGaussian(Detector):
             img2 = draw_contours(find_contours(blur), p.input)
             return img1, img2
 
-        p.add_operation(gettext("Draw contours"), draw_cnts)
+        p.add_operation(gettext("OUTPUT"), draw_cnts)
 
         return p
