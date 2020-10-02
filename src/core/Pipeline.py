@@ -11,7 +11,7 @@ class Pipeline:
 
     def __init__(self, debug=False):
         """
-        :param debug: a matplotlib subplot will be show with all the operations not hidden
+        :param debug: if True a matplotlib figure with subplots will be show all operations not hidden
         """
         self.debug = debug
         self._operations = list()
@@ -20,7 +20,7 @@ class Pipeline:
 
     def store(self, key, value):
         """
-        Save a custom object in the pipeline in ordder to be able to load it after
+        Save a custom object in the pipeline in order to be able to load it after
         :param key: key
         :param value: value
         """
@@ -36,7 +36,7 @@ class Pipeline:
 
     def _apply(self, image):
         """
-        Apply operation images sequentially
+        Apply operations sequentially
         :param image: starting image
         :return: image transformed
         """
@@ -80,8 +80,7 @@ class Pipeline:
     def exec(self, to_image):
         """
         Exec the pipeline
-        :param to_image:
-        :return:
+        :param to_image: starting image
         """
         self.input = to_image
         result = self._apply(self.input)

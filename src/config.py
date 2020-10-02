@@ -8,7 +8,7 @@ start_from = 0
 # ================================================================================================
 
 detector_key = "background"  # background, background_no_gaussian
-kind = "adaptive"  # arg for detector['background']: static, first, adaptive
+kind = "static"  # arg for detector['background']: static, first, adaptive
 
 # ================================================================================================
 # Insert here the absolute or relative path of the video

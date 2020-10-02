@@ -1,4 +1,5 @@
 from pathlib import Path
+from core.common import check_args
 
 import cv2
 
@@ -55,7 +56,7 @@ class Video:
         """
         Read n-frames
         :param preprocessing: preprocessing function on the frame
-        :param amount: amount of frame to be returned
+        :param n: amount of frame to be returned
         :return: list of frames
         """
         return [self.get_frame(preprocessing) for _ in range(n)]
@@ -86,7 +87,7 @@ class Video:
         bg_interpolated = np.stack(frames, axis=0)
         bg_interpolated = interpolation(bg_interpolated, axis=0)
 
-        # return to previous frame
+        # return to the previous frame
         self.current_frame_position = current_pos
 
         return bg_interpolated.astype(np.uint8)

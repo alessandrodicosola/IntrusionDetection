@@ -63,7 +63,7 @@ def find_contours(mask, filter=None):
     Method for finding and filtering contours.
     :param mask: binary image where to find contours
     :param filter: filter function. filter(contour) -> True: accepted; False: rejected
-    :return: list of filtered contours as class core.Contour.Contour
+    :return: list of filtered contours using core.Contour.Contour
     """
     import cv2
     from core import Contour
@@ -152,6 +152,7 @@ def get_grad(image):
     central_diff_x = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
     central_diff_y = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]])
     # compute derivatives
+    # when ddepth=-1, the output image will have the same depth as the source.
     dx = np.abs(cv2.filter2D(image, -1, central_diff_x))
     dy = np.abs(cv2.filter2D(image, -1, central_diff_y))
     grad = np.maximum(dx, dy)
@@ -168,7 +169,7 @@ def check_args(dictionary: dict):
     """
 
     # Static check
-    # argument is a dictionary
+    # argument is a dictionary -> arg: choices
     assert isinstance(dictionary, dict)
     # each choices element is a iterable
     for key in dictionary:

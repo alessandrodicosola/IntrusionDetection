@@ -55,6 +55,7 @@ class Contour:
         """
         Get the image inside the contour or the bounding box of the contour
         :param input_frame: input image
+        :param use_bounding_box Use the image inside the bounding box
         :return:
         """
         if use_bounding_box:
@@ -68,11 +69,11 @@ class Contour:
         import matplotlib.pyplot as plt
         # Init output
         out = np.zeros_like(input_frame)
-        # Init background with blackpixels
+        # Init background with black pixels
         bg = out.copy()
         # Draw the contour filled (thickness=-1)
         mask = cv2.drawContours(bg, [self.contour], 0, 255, thickness=-1)
-        # Copy pixels from the input image to the output image where intensity is 255 using the mask
+        # Copy pixels from the input image to the output image where pixels intensity is 255 in the mask
         out[mask == 255] = input_frame[mask == 255]
         return out[self.y:self.y + self.h, self.x:self.x + self.w]
 
