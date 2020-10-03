@@ -62,3 +62,39 @@ def check_thresholding(frame):
     images = [cv2.threshold(frame, 0, 255, thr)[1] for thr in val_thr]
     display_images(images)
 
+
+from core import Video, Pipeline
+from core.common import get_grad
+
+
+def gen_pipeline(video: Video):
+    pipeline = Pipeline(debug=True)
+    frame = video.get_frame()
+
+    # Show the input
+    pipeline.add_operation("Input", lambda frame: frame)
+
+    pipeline.add_operation("Gradient", lambda frame: get_grad(frame))
+
+    #pipeline.add_operation("Heatmap", lambda frame: cv2.applyColorMap(frame, cv2.COLORMAP_JET))
+
+    pipeline.add_operation("Mask", lambda frame: frame < 30)
+
+    def showonlymask(mask):
+        import numpy as np
+        input = pipeline.input.copy()
+        out = np.empty_like(input)
+        out[mask] = input[mask]
+        return out
+
+    pipeline.add_operation("Apply mask on the input image", showonlymask)
+
+    result = pipeline.exec(frame)
+
+    plt.imshow(result)
+    plt.show()
+
+
+if __name__ == "__main__":
+    with Video(R"..\\in\\rilevamento-intrusioni-video.avi") as video:
+        gen_pipeline(video)
