@@ -115,15 +115,81 @@ pipeline.add_operation("Apply mask on the input image", showonlymask)
     \end{figure}
 \end{frame}
 
+\begin{frame}[fragile]{Detector}{Parameters}
+    \begin{tabular}{cccc}
+        kind     & distance      & threshold & alpha\footnotemark \\
+        \hline
+        static   & max\_distance & 30        & -     \\
+        first    & max\_distance & 34        & -     \\
+        adaptive & l1            & 5         & 0.70
+    \end{tabular}
+    \footnotetext{alpha regulates the update speed (how fast the accumulator "forgets" about earlier images).}
+\end{frame}
+
+\begin{frame}{Detector - first}{Difference between threshold 30 and 34}
+    \begin{columns}
+        \begin{column}[t]{0.5\paperwidth}
+            \centering
+            \includegraphics[width=0.5\textwidth,keepaspectratio]{background_first_30.PNG}
+        \end{column}
+        \begin{column}[t]{0.5\paperwidth}
+            \centering
+            \includegraphics[width=0.5\textwidth,keepaspectratio]{background_first_34.PNG}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Detector - adaptive}{alpha parameter}
+    \begin{columns}
+        \begin{column}[t]{0.5\textwidth}
+            \centering
+            ALPHA = 0.7    
+            \includegraphics[width=120pt,keepaspectratio]{adaptive_alpha07_f482.png}
+        \end{column}
+        \begin{column}[t]{0.5\textwidth}
+            \centering
+            ALPHA = 0.8    
+            \includegraphics[width=120pt,keepaspectratio]{adaptive_alpha08_f482.png}
+        \end{column}
+    \end{columns}
+\end{frame}
 
 \begin{frame}[fragile]{Detector}{Filtering and handling false positive}
 \tiny
 \hspace*{-1cm}\begin{tabular}[h]{ccccccccc}
 index & area	& perimeter & 	ratio & circularity & rectangularity & mean & std & label \\
-0 & \color{orange}{1243.0} & \color{orange}{146.76} & 0.80 & 0.93 & \color{red}{1545.35} & - & 0.203 & other \\
+0 & \color{orange}{1243.0} & \color{orange}{146.76} & 0.80 & 0.93 & \color{red}{1545.35} & 0.13 & 0.203 & other \\
 1 & 855.0 & 113.45 & 1.06 & 1.06 & 803.18 & 0.013 & \color{darkmagenta}{0.020} & other false positive \\
-2 & \color{applegreen}{15028.5} & 587.80 & \color{blue}{0.47} & 0.93 & 31897.22 & - & 0.177 & person
+2 & \color{applegreen}{15028.5} & 587.80 & \color{blue}{0.47} & 0.93 & 31897.22 & 0.09 & 0.177 & person
 \end{tabular}        
+
+
+\begin{columns}
+    \begin{column}[t]{0.33\textwidth}
+        \centering
+        Filtering
+        \begin{verbatim}
+            rectangularity > 5000:
+            else
+            perimeter > 100 and area > 300
+        \end{verbatim}        
+    \end{column}
+    \begin{column}[t]{0.33\textwidth}
+        \centering
+        Labelling
+        \begin{verbatim}
+            area > 3000 or ratio < 0.3            
+        \end{verbatim}
+    \end{column}
+    \begin{column}[t]{0.33\textwidth}
+        \centering
+        False positive
+        \begin{verbatim}
+            std < 0.1
+        \end{verbatim}
+    \end{column}
+
+\end{columns}
 \end{frame}
 
 \begin{frame}{Conclusion}{Output of the frame 481}

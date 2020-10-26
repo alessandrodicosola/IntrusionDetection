@@ -76,7 +76,7 @@ def find_contours(mask, filter=None):
 def filter_contours(raw_contour):
     """
     Basic filtering function.
-    Return True for big objects or with meaningless area and perimeter.
+    Return True for big objects or with meaningfull area and perimeter.
     :param raw_contour: contour points
     :return: bool
     """

@@ -104,12 +104,12 @@ class BackgroundSubtractor(Detector):
 
         pipeline.add_operation(["Median filter", "Median filter + Opening"], partial(remove_noise, size=7))
 
-        pipeline.add_operation("Connect foreground horizontally",
+        pipeline.add_operation("Connect foreground vertically",
                                lambda frame: cv2.morphologyEx(frame[-1], cv2.MORPH_CLOSE,
                                                               cv2.getStructuringElement(cv2.MORPH_RECT, (5, 30)),
                                                               iterations=1))
 
-        pipeline.add_operation("Connect foreground vertically",
+        pipeline.add_operation("Connect foreground horizontally",
                                lambda frame: cv2.morphologyEx(frame, cv2.MORPH_CLOSE,
                                                               cv2.getStructuringElement(cv2.MORPH_RECT, (30, 5)),
                                                               iterations=1))
